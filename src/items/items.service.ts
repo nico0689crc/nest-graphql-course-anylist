@@ -1,26 +1,62 @@
-import { Injectable } from '@nestjs/common';
-import { CreateItemInput } from './dto/create-item.input';
-import { UpdateItemInput } from './dto/update-item.input';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { CreateItemInput } from './dto/inputs/create-item.input';
+
+import { InjectRepository } from '@nestjs/typeorm';
+import { Item } from './entities/item.entity';
+import { Repository } from 'typeorm';
+import { UpdateItemInput } from './dto/inputs/update-item.input';
 
 @Injectable()
 export class ItemsService {
-  create(createItemInput: CreateItemInput) {
-    return 'This action adds a new item';
+  constructor(
+    @InjectRepository(Item)
+    private readonly itemRepository: Repository<Item>,
+  ) {}
+
+  async create(createItemInput: CreateItemInput): Promise<Item> {
+    const item = await this.itemRepository.save({
+      ...createItemInput,
+    });
+
+    return item;
   }
 
-  findAll() {
-    return `This action returns all items`;
+  async findAll(): Promise<Item[]> {
+    return await this.itemRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} item`;
+  async findOne(id: string): Promise<Item> {
+    const item = await this.itemRepository.findOne({ where: { id } });
+
+    if (!item) {
+      throw new NotFoundException(`Item with id ${id} could not be found.`);
+    }
+
+    return item;
   }
 
-  update(id: number, updateItemInput: UpdateItemInput) {
-    return `This action updates a #${id} item`;
+  async update(id: string, updateItemInput: UpdateItemInput): Promise<Item> {
+    const item = await this.itemRepository.preload(updateItemInput);
+
+    if (!item) {
+      throw new NotFoundException(`Item with id ${id} could not be found.`);
+    }
+
+    return this.itemRepository.save(item);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} item`;
+  async remove(id: string): Promise<Item> {
+    const item = await this.itemRepository.findOne({ where: { id } });
+
+    if (!item) {
+      throw new NotFoundException(`Item with id ${id} could not be found.`);
+    }
+
+    await this.itemRepository.remove(item);
+
+    return {
+      ...item,
+      id
+    }
   }
 }

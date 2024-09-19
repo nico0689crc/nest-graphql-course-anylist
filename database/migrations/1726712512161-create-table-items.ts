@@ -1,3 +1,4 @@
+import { QuantityUnits } from "src/items/entities/item.entity";
 import { MigrationInterface, QueryRunner, Table } from "typeorm";
 
 export class CreateTableItems1726712512161 implements MigrationInterface {
@@ -25,7 +26,7 @@ export class CreateTableItems1726712512161 implements MigrationInterface {
               {
                 name: 'quantityUnits',
                 type: 'enum',
-                enum: ['USER_REGULAR', 'USER_ADMINISTRATOR'],
+                enum: Object.values(QuantityUnits),
                 isNullable: true,
               },
               {

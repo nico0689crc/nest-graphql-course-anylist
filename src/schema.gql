@@ -6,35 +6,29 @@ type Item {
   id: ID!
   name: String!
   quantity: Float!
-  quantityUnits: QuantityUnits
-}
-
-"""Units of measurement for quantity"""
-enum QuantityUnits {
-  UNIT_G
-  UNIT_ML
-  UNIT_KG
-  UNIT_TSP
+  quantityUnits: String
 }
 
 type Query {
   items: [Item!]!
-  item(id: Int!): Item!
+  item(id: String!): Item!
 }
 
 type Mutation {
   createItem(createItemInput: CreateItemInput!): Item!
   updateItem(updateItemInput: UpdateItemInput!): Item!
-  removeItem(id: Int!): Item!
+  removeItem(id: String!): Item!
 }
 
 input CreateItemInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  name: String!
+  quantity: Float!
+  quantityUnits: String
 }
 
 input UpdateItemInput {
-  """Example field (placeholder)"""
-  exampleField: Int
-  id: Int!
+  name: String
+  quantity: Float
+  quantityUnits: String
+  id: String!
 }

@@ -1,11 +1,17 @@
-import { ObjectType, Field, ID, Float, registerEnumType } from '@nestjs/graphql';
+import {
+  ObjectType,
+  Field,
+  ID,
+  Float,
+  registerEnumType,
+} from '@nestjs/graphql';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 export enum QuantityUnits {
-  UNIT_G = 'UNIT_G',
-  UNIT_ML = 'UNIT_ML',
-  UNIT_KG = 'UNIT_KG',
-  UNIT_TSP = 'UNIT_TSP',
+  UNIT_G = 'g',
+  UNIT_ML = 'ml',
+  UNIT_KG = 'kg',
+  UNIT_TSP = 'tsp',
 }
 
 registerEnumType(QuantityUnits, {
@@ -28,13 +34,13 @@ export class Item {
   @Field(() => Float)
   quantity: number;
 
-  @Column({ 
+  @Column({
     type: 'enum',
     enum: QuantityUnits,
-    nullable: true 
+    nullable: true,
   })
-  @Field(() => QuantityUnits, { nullable: true })
-  quantityUnits?: QuantityUnits; // g, ml, kg, tsp
+  @Field(() => String, { nullable: true })
+  quantityUnits?: QuantityUnits;
 
   // stores
   // user
